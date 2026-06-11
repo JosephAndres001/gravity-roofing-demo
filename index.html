@@ -654,76 +654,6 @@
     </div>
   </section>
 
-  <!-- ── Automations spotlight ── -->
-  <style>
-    #automations .auto-head { max-width:720px; margin:0 auto 3rem; text-align:center; }
-    #automations .auto-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:1.25rem; }
-    .auto-card {
-      position:relative; display:flex; flex-direction:column; gap:0.85rem; min-height:100%;
-      background:var(--surface-el); border:1px solid var(--border); border-radius:var(--radius-lg);
-      padding:1.7rem; overflow:hidden;
-      box-shadow:0 1px 2px rgba(0,0,0,0.18), 0 12px 30px rgba(0,0,0,0.26);
-      transition:transform 260ms cubic-bezier(0.34,1.56,0.64,1), border-color 220ms ease, box-shadow 220ms ease;
-    }
-    .auto-card::after { content:""; position:absolute; left:0; right:0; top:0; height:3px; background:linear-gradient(90deg,var(--brand),var(--accent)); opacity:0; transition:opacity 220ms ease; }
-    .auto-card:hover { transform:translateY(-5px); border-color:var(--border-hi); box-shadow:0 1px 2px rgba(0,0,0,0.2), 0 22px 46px rgba(255,106,61,0.16); }
-    .auto-card:hover::after { opacity:1; }
-    .auto-num { position:absolute; top:1.15rem; right:1.45rem; font-family:'Sora'; font-weight:800; font-size:2.2rem; line-height:1; color:transparent; -webkit-text-stroke:1.3px var(--border-hi); }
-    .auto-ic { flex:none; width:54px; height:54px; border-radius:15px; display:flex; align-items:center; justify-content:center; font-size:1.55rem; background:linear-gradient(140deg, rgba(255,106,61,0.18), rgba(57,208,200,0.08)); border:1px solid var(--border-hi); }
-    .auto-card h3 { font-family:'Sora'; font-size:1.18rem; font-weight:700; }
-    .auto-card p { color:var(--text-soft); font-size:0.95rem; line-height:1.62; }
-    .auto-tag { margin-top:auto; align-self:flex-start; display:inline-flex; align-items:center; gap:0.4rem; font-size:0.8rem; font-weight:600; color:var(--accent); background:var(--surface-fl); border:1px solid var(--border); border-radius:100px; padding:0.42rem 0.85rem; }
-    a.auto-card { text-decoration:none; color:inherit; }
-    a.auto-card .auto-tag { color:var(--brand-light); border-color:var(--border-hi); }
-    a.auto-card:focus-visible { outline:2px solid var(--brand-light); outline-offset:3px; }
-    a.auto-card:active { transform:translateY(-2px); }
-    .auto-foot { margin-top:2.25rem; text-align:center; }
-    .auto-foot p { color:var(--text-muted); font-size:0.92rem; max-width:640px; margin:0 auto; }
-    @media (max-width:760px){ #automations .auto-grid { grid-template-columns:1fr; } }
-  </style>
-  <section id="automations">
-    <div class="wrap">
-      <div class="auto-head">
-        <span class="eyebrow reveal">Behind the fast replies</span>
-        <h2 class="h2 reveal">Four automations work every lead — so none slip away.</h2>
-        <p class="lead reveal">The speed isn't luck. A booking, reply, call, and tracking system runs 24/7 behind the site — quietly turning every visitor into a confirmed, followed-up lead.</p>
-      </div>
-      <div class="auto-grid">
-        <div class="auto-card reveal">
-          <span class="auto-num">01</span>
-          <div class="auto-ic">⚡</div>
-          <h3>Instant online booking</h3>
-          <p>Homeowners pick an inspection time right on the site — 24/7 — and it lands on the calendar before they close the tab. No phone tag, no waiting for office hours.</p>
-          <span class="auto-tag">Booked in ~60 seconds</span>
-        </div>
-        <div class="auto-card reveal">
-          <span class="auto-num">02</span>
-          <div class="auto-ic">💬</div>
-          <h3>Instant text-back reply</h3>
-          <p>Every new lead gets an automatic reply in under a minute — day, night, or mid-storm — opening a real conversation instead of dropping into a voicemail box.</p>
-          <span class="auto-tag">Replies under 60 sec</span>
-        </div>
-        <div class="auto-card reveal">
-          <span class="auto-num">03</span>
-          <div class="auto-ic">📞</div>
-          <h3>One-tap click-to-call</h3>
-          <p>A tap-to-call button on every screen routes straight to the crew, and any missed call fires an automatic text — so the ones you can't grab never go to a competitor.</p>
-          <span class="auto-tag">Never miss a call</span>
-        </div>
-        <a href="dashboard.html" class="auto-card reveal">
-          <span class="auto-num">04</span>
-          <div class="auto-ic">📊</div>
-          <h3>Owner lead dashboard</h3>
-          <p>Every call, form, and chat lands in one live dashboard — the owner sees each lead, its status, and what to follow up on next. Nothing slips through the cracks.</p>
-          <span class="auto-tag">Open the live dashboard →</span>
-        </a>
-      </div>
-      <div class="auto-foot reveal">
-        <p>Booking · reply · call · tracking — one connected system that turns an ordinary website into a 24/7 front desk.</p>
-      </div>
-    </div>
-  </section>
-
   <!-- ── Process ── -->
   <section id="process">
     <div class="wrap">
@@ -1241,7 +1171,7 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
       </button>
     </div>
-    <div class="chat-note">AI assistant demo · we never share your info</div>
+    <div class="chat-note">We typically reply in under a minute · we never share your info</div>
   </div>
 
   <button id="chat-launcher" aria-label="Open chat assistant" aria-expanded="false">
