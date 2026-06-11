@@ -169,14 +169,21 @@
     @media (max-width:880px){ .nav-links, .nav-actions .call-link, .nav-actions .btn { display:none; } .nav-toggle { display:flex; } }
 
     /* ── Hero ── */
-    #hero { padding-top:11rem; padding-bottom:5rem; position:relative; overflow:hidden; isolation:isolate; }
+    #hero {
+      padding-top:11rem; padding-bottom:5rem; position:relative; overflow:hidden; isolation:isolate;
+      background:url('assets/img/hero-video-poster.jpg') center 38%/cover no-repeat var(--surface);
+    }
+    .hero-bg {
+      position:absolute; inset:0; z-index:-2; width:100%; height:100%;
+      object-fit:cover; object-position:center 42%; pointer-events:none;
+    }
     #hero::before {
       content:""; position:absolute; inset:0; z-index:-1;
       background:
         linear-gradient(100deg, rgba(8,10,15,0.97) 0%, rgba(8,10,15,0.9) 36%, rgba(8,10,15,0.64) 68%, rgba(8,10,15,0.5) 100%),
-        linear-gradient(0deg, var(--surface) 1%, rgba(10,12,18,0) 36%),
-        url('assets/img/hero.jpg') center 28%/cover no-repeat;
+        linear-gradient(0deg, var(--surface) 1%, rgba(10,12,18,0) 36%);
     }
+    @media (prefers-reduced-motion: reduce){ .hero-bg { display:none; } }
     .hero-grid { display:grid; grid-template-columns:1.05fr 0.95fr; gap:3.5rem; align-items:center; }
     .badge-row { display:flex; flex-wrap:wrap; gap:0.6rem; margin-bottom:1.5rem; }
     .badge {
@@ -439,6 +446,7 @@
       <ul class="nav-links">
         <li><a href="#services">Services</a></li>
         <li><a href="#process">How it works</a></li>
+        <li><a href="#work">Work</a></li>
         <li><a href="#reviews">Reviews</a></li>
         <li><a href="#faq">FAQ</a></li>
       </ul>
@@ -447,7 +455,7 @@
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
           (407) 461-0234
         </a>
-        <a href="#book" class="btn btn-primary">Free inspection</a>
+        <a href="#book" class="btn btn-primary">Free quote</a>
       </div>
       <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
         <span></span><span></span><span></span>
@@ -459,15 +467,19 @@
   <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile navigation">
     <a href="#services">Services</a>
     <a href="#process">How it works</a>
+    <a href="#work">Work</a>
     <a href="#reviews">Reviews</a>
     <a href="#areas">Areas served</a>
     <a href="#faq">FAQ</a>
     <a href="tel:+14074610234" class="btn btn-ghost">Call (407) 461-0234</a>
-    <a href="#book" class="btn btn-primary">Free inspection</a>
+    <a href="#book" class="btn btn-primary">Free quote</a>
   </nav>
 
   <!-- ── Hero ── -->
   <section id="hero">
+    <video class="hero-bg" autoplay muted loop playsinline preload="auto" poster="assets/img/hero-video-poster.jpg" aria-hidden="true" tabindex="-1">
+      <source src="assets/video/hero-roof.mp4" type="video/mp4" />
+    </video>
     <div class="wrap hero-grid">
       <div>
         <div class="badge-row">
@@ -642,6 +654,76 @@
     </div>
   </section>
 
+  <!-- ── Automations spotlight ── -->
+  <style>
+    #automations .auto-head { max-width:720px; margin:0 auto 3rem; text-align:center; }
+    #automations .auto-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:1.25rem; }
+    .auto-card {
+      position:relative; display:flex; flex-direction:column; gap:0.85rem; min-height:100%;
+      background:var(--surface-el); border:1px solid var(--border); border-radius:var(--radius-lg);
+      padding:1.7rem; overflow:hidden;
+      box-shadow:0 1px 2px rgba(0,0,0,0.18), 0 12px 30px rgba(0,0,0,0.26);
+      transition:transform 260ms cubic-bezier(0.34,1.56,0.64,1), border-color 220ms ease, box-shadow 220ms ease;
+    }
+    .auto-card::after { content:""; position:absolute; left:0; right:0; top:0; height:3px; background:linear-gradient(90deg,var(--brand),var(--accent)); opacity:0; transition:opacity 220ms ease; }
+    .auto-card:hover { transform:translateY(-5px); border-color:var(--border-hi); box-shadow:0 1px 2px rgba(0,0,0,0.2), 0 22px 46px rgba(255,106,61,0.16); }
+    .auto-card:hover::after { opacity:1; }
+    .auto-num { position:absolute; top:1.15rem; right:1.45rem; font-family:'Sora'; font-weight:800; font-size:2.2rem; line-height:1; color:transparent; -webkit-text-stroke:1.3px var(--border-hi); }
+    .auto-ic { flex:none; width:54px; height:54px; border-radius:15px; display:flex; align-items:center; justify-content:center; font-size:1.55rem; background:linear-gradient(140deg, rgba(255,106,61,0.18), rgba(57,208,200,0.08)); border:1px solid var(--border-hi); }
+    .auto-card h3 { font-family:'Sora'; font-size:1.18rem; font-weight:700; }
+    .auto-card p { color:var(--text-soft); font-size:0.95rem; line-height:1.62; }
+    .auto-tag { margin-top:auto; align-self:flex-start; display:inline-flex; align-items:center; gap:0.4rem; font-size:0.8rem; font-weight:600; color:var(--accent); background:var(--surface-fl); border:1px solid var(--border); border-radius:100px; padding:0.42rem 0.85rem; }
+    a.auto-card { text-decoration:none; color:inherit; }
+    a.auto-card .auto-tag { color:var(--brand-light); border-color:var(--border-hi); }
+    a.auto-card:focus-visible { outline:2px solid var(--brand-light); outline-offset:3px; }
+    a.auto-card:active { transform:translateY(-2px); }
+    .auto-foot { margin-top:2.25rem; text-align:center; }
+    .auto-foot p { color:var(--text-muted); font-size:0.92rem; max-width:640px; margin:0 auto; }
+    @media (max-width:760px){ #automations .auto-grid { grid-template-columns:1fr; } }
+  </style>
+  <section id="automations">
+    <div class="wrap">
+      <div class="auto-head">
+        <span class="eyebrow reveal">Behind the fast replies</span>
+        <h2 class="h2 reveal">Four automations work every lead — so none slip away.</h2>
+        <p class="lead reveal">The speed isn't luck. A booking, reply, call, and tracking system runs 24/7 behind the site — quietly turning every visitor into a confirmed, followed-up lead.</p>
+      </div>
+      <div class="auto-grid">
+        <div class="auto-card reveal">
+          <span class="auto-num">01</span>
+          <div class="auto-ic">⚡</div>
+          <h3>Instant online booking</h3>
+          <p>Homeowners pick an inspection time right on the site — 24/7 — and it lands on the calendar before they close the tab. No phone tag, no waiting for office hours.</p>
+          <span class="auto-tag">Booked in ~60 seconds</span>
+        </div>
+        <div class="auto-card reveal">
+          <span class="auto-num">02</span>
+          <div class="auto-ic">💬</div>
+          <h3>Instant text-back reply</h3>
+          <p>Every new lead gets an automatic reply in under a minute — day, night, or mid-storm — opening a real conversation instead of dropping into a voicemail box.</p>
+          <span class="auto-tag">Replies under 60 sec</span>
+        </div>
+        <div class="auto-card reveal">
+          <span class="auto-num">03</span>
+          <div class="auto-ic">📞</div>
+          <h3>One-tap click-to-call</h3>
+          <p>A tap-to-call button on every screen routes straight to the crew, and any missed call fires an automatic text — so the ones you can't grab never go to a competitor.</p>
+          <span class="auto-tag">Never miss a call</span>
+        </div>
+        <a href="dashboard.html" class="auto-card reveal">
+          <span class="auto-num">04</span>
+          <div class="auto-ic">📊</div>
+          <h3>Owner lead dashboard</h3>
+          <p>Every call, form, and chat lands in one live dashboard — the owner sees each lead, its status, and what to follow up on next. Nothing slips through the cracks.</p>
+          <span class="auto-tag">Open the live dashboard →</span>
+        </a>
+      </div>
+      <div class="auto-foot reveal">
+        <p>Booking · reply · call · tracking — one connected system that turns an ordinary website into a 24/7 front desk.</p>
+      </div>
+    </div>
+  </section>
+
   <!-- ── Process ── -->
   <section id="process">
     <div class="wrap">
@@ -659,6 +741,27 @@
   </section>
 
   <!-- ── Reviews ── -->
+  <style>
+    #reviews .review-area {
+      margin-top:2.75rem; display:flex; align-items:center; gap:1.25rem; flex-wrap:wrap;
+      background:linear-gradient(120deg, rgba(57,208,200,0.08), rgba(255,106,61,0.05));
+      border:1px solid var(--border-hi); border-radius:var(--radius-lg);
+      padding:1.3rem 1.6rem; box-shadow:var(--shadow-card);
+    }
+    #reviews .ra-ic { flex:none; width:48px; height:48px; border-radius:13px; background:var(--surface-fl); border:1px solid var(--border-hi); display:flex; align-items:center; justify-content:center; color:var(--accent); }
+    #reviews .ra-txt { flex:1 1 280px; }
+    #reviews .ra-txt strong { display:block; font-family:'Sora'; font-size:1.02rem; margin-bottom:0.15rem; }
+    #reviews .ra-txt span { font-size:0.88rem; color:var(--text-muted); }
+    #reviews .ra-link {
+      flex:none; display:inline-flex; align-items:center; gap:0.45rem; font-weight:600; font-size:0.9rem;
+      color:var(--text); text-decoration:none; background:var(--surface-fl); border:1px solid var(--border);
+      border-radius:11px; padding:0.65rem 1rem; transition:border-color 160ms ease, transform 160ms ease;
+    }
+    #reviews .ra-link:hover { border-color:var(--border-hi); transform:translateY(-2px); }
+    #reviews .ra-link:active { transform:translateY(0); }
+    #reviews .ra-link:focus-visible { outline:2px solid var(--brand-light); outline-offset:2px; }
+    @media (max-width:560px){ #reviews .review-area { padding:1.1rem 1.2rem; } #reviews .ra-link { width:100%; justify-content:center; } }
+  </style>
   <section id="reviews">
     <div class="wrap">
       <div class="center" style="margin-bottom:3rem;">
@@ -681,6 +784,19 @@
           <blockquote>"What sold me was how fast and clear they were. No phone tag, no vague quotes. Honest crew, spotless cleanup, fair price."</blockquote>
           <div class="who"><div class="av">JC</div><div><div class="nm">James C.</div><div class="rl">Kissimmee, FL</div></div></div>
         </div>
+      </div>
+
+      <div class="review-area reveal">
+        <span class="ra-ic">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </span>
+        <div class="ra-txt">
+          <strong>Trusted by homeowners across Central Florida</strong>
+          <span>Orlando · Winter Park · Kissimmee · Sanford · Lake Mary · Oviedo · Apopka &amp; nearby</span>
+        </div>
+        <a href="#location" class="ra-link">See our service area
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
       </div>
     </div>
   </section>
