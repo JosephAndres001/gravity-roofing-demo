@@ -1,0 +1,14 @@
+# Disposable / local-only
+.tmp/
+_shot.html
+
+# Secrets & credentials (never commit)
+.env
+.env.local
+.vercel
+credentials.json
+token.json
+
+# OS noise
+Thumbs.db
+.DS_Store

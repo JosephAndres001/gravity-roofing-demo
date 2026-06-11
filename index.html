@@ -36,7 +36,7 @@
       --text:#F3F1ED; --text-muted:#7C8499; --text-soft:#AEB6C7;
       --radius:12px; --radius-lg:20px;
       --shadow-card: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.35), 0 18px 48px rgba(255,106,61,0.07);
-      --maxw:1200px;
+      --maxw:1200px; --ebar-h:44px;
     }
 
     * { margin:0; padding:0; box-sizing:border-box; }
@@ -107,8 +107,8 @@
 
     /* ── Nav ── */
     header {
-      position:fixed; top:0; left:0; right:0; z-index:200;
-      transition:background 250ms ease, border-color 250ms ease, backdrop-filter 250ms ease;
+      position:fixed; top:var(--ebar-h); left:0; right:0; z-index:200;
+      transition:background 250ms ease, border-color 250ms ease, backdrop-filter 250ms ease, top 250ms ease;
       border-bottom:1px solid transparent;
     }
     header.scrolled {
@@ -169,7 +169,14 @@
     @media (max-width:880px){ .nav-links, .nav-actions .call-link, .nav-actions .btn { display:none; } .nav-toggle { display:flex; } }
 
     /* ── Hero ── */
-    #hero { padding-top:11rem; padding-bottom:5rem; }
+    #hero { padding-top:11rem; padding-bottom:5rem; position:relative; overflow:hidden; isolation:isolate; }
+    #hero::before {
+      content:""; position:absolute; inset:0; z-index:-1;
+      background:
+        linear-gradient(100deg, rgba(8,10,15,0.97) 0%, rgba(8,10,15,0.9) 36%, rgba(8,10,15,0.64) 68%, rgba(8,10,15,0.5) 100%),
+        linear-gradient(0deg, var(--surface) 1%, rgba(10,12,18,0) 36%),
+        url('assets/img/hero.jpg') center 28%/cover no-repeat;
+    }
     .hero-grid { display:grid; grid-template-columns:1.05fr 0.95fr; gap:3.5rem; align-items:center; }
     .badge-row { display:flex; flex-wrap:wrap; gap:0.6rem; margin-bottom:1.5rem; }
     .badge {
@@ -224,10 +231,15 @@
     .grid-2 { display:grid; grid-template-columns:repeat(2,1fr); gap:1.25rem; }
     .card {
       background:var(--surface-el); border:1px solid var(--border); border-radius:var(--radius-lg);
-      padding:2rem 1.75rem; transition:transform 240ms cubic-bezier(0.34,1.56,0.64,1), border-color 240ms ease, box-shadow 240ms ease;
+      padding:0; overflow:hidden; transition:transform 240ms cubic-bezier(0.34,1.56,0.64,1), border-color 240ms ease, box-shadow 240ms ease;
     }
     .card:hover { transform:translateY(-6px); border-color:var(--border-hi); box-shadow:var(--shadow-card); }
-    .card-icon { width:48px; height:48px; border-radius:13px; background:var(--surface-hi); display:flex; align-items:center; justify-content:center; font-size:1.5rem; margin-bottom:1.1rem; border:1px solid var(--border); }
+    .card-media { height:172px; position:relative; overflow:hidden; }
+    .card-media img { width:100%; height:100%; object-fit:cover; transition:transform 500ms cubic-bezier(0.22,1,0.36,1); }
+    .card:hover .card-media img { transform:scale(1.06); }
+    .card-media::after { content:""; position:absolute; inset:0; background:linear-gradient(to top, var(--surface-el), rgba(16,19,28,0.1) 55%, transparent); }
+    .card-body { padding:0 1.75rem 2rem; }
+    .card-icon { width:48px; height:48px; border-radius:13px; background:var(--surface-hi); display:flex; align-items:center; justify-content:center; font-size:1.5rem; margin-top:-2.6rem; margin-bottom:1.1rem; border:1px solid var(--border); position:relative; z-index:2; box-shadow:0 8px 20px rgba(0,0,0,0.45); }
     .card h3 { font-size:1.2rem; font-weight:700; margin-bottom:0.6rem; }
     .card p { color:var(--text-muted); font-size:0.92rem; }
     .card ul { list-style:none; margin-top:1rem; display:flex; flex-direction:column; gap:0.5rem; }
@@ -343,10 +355,58 @@
       .float-stat { left:auto; right:0.5rem; }
     }
 
+    /* ── Emergency call bar ── */
+    #ebar {
+      position:fixed; top:0; left:0; right:0; z-index:250; height:var(--ebar-h);
+      display:flex; align-items:center;
+      background:linear-gradient(90deg, var(--brand-dark), var(--brand) 60%, var(--brand-light));
+      box-shadow:0 2px 18px rgba(255,106,61,0.4);
+    }
+    #ebar.ebar-hidden { display:none; }
+    body.ebar-off { --ebar-h:0px; }
+    .ebar-in { display:flex; align-items:center; justify-content:center; gap:1rem; width:100%; position:relative; padding:0 2.6rem; }
+    .ebar-msg { display:inline-flex; align-items:center; gap:0.55rem; color:#fff; font-size:0.88rem; font-weight:500; }
+    .ebar-msg strong { font-weight:800; }
+    .ebar-dot { width:9px; height:9px; border-radius:50%; background:#fff; flex:none; box-shadow:0 0 0 0 rgba(255,255,255,0.75); animation:epulse 1.6s infinite; }
+    @keyframes epulse { 0%{box-shadow:0 0 0 0 rgba(255,255,255,0.6);} 70%{box-shadow:0 0 0 8px rgba(255,255,255,0);} 100%{box-shadow:0 0 0 0 rgba(255,255,255,0);} }
+    .ebar-call {
+      display:inline-flex; align-items:center; gap:0.4rem; white-space:nowrap;
+      background:#160a05; color:#fff; font-family:'Sora',sans-serif; font-weight:700; font-size:0.82rem;
+      padding:0.42rem 0.95rem; border-radius:100px; text-decoration:none; border:1px solid rgba(255,255,255,0.28);
+      transition:transform 160ms ease, background 160ms ease;
+    }
+    .ebar-call:hover { transform:translateY(-1px); background:#000; }
+    .ebar-call:active { transform:translateY(0); }
+    .ebar-call:focus-visible { outline:2px solid #fff; outline-offset:2px; }
+    .ebar-x { position:absolute; right:0.4rem; top:50%; transform:translateY(-50%); background:transparent; border:none; color:rgba(255,255,255,0.85); font-size:1.4rem; line-height:1; cursor:pointer; padding:0 0.45rem; border-radius:6px; }
+    .ebar-x:hover { color:#fff; background:rgba(0,0,0,0.18); }
+    .ebar-x:focus-visible { outline:2px solid #fff; outline-offset:1px; }
+
+    /* ── Recent-work gallery ── */
+    .gallery { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; }
+    .gtile { position:relative; margin:0; border-radius:var(--radius-lg); overflow:hidden; aspect-ratio:4/3; border:1px solid var(--border); box-shadow:var(--shadow-card); }
+    .gtile img { width:100%; height:100%; object-fit:cover; display:block; transition:transform 600ms cubic-bezier(0.22,1,0.36,1); }
+    .gtile:hover img { transform:scale(1.07); }
+    .gtile figcaption {
+      position:absolute; inset:auto 0 0 0; padding:1.1rem 1.1rem 0.95rem;
+      display:flex; justify-content:space-between; align-items:flex-end; gap:0.5rem;
+      background:linear-gradient(to top, rgba(0,0,0,0.82), rgba(0,0,0,0.1) 75%, transparent);
+      font-family:'Sora',sans-serif; font-weight:600; font-size:0.92rem; color:#fff;
+    }
+    .gloc { font-family:'Inter',sans-serif; font-size:0.76rem; color:var(--brand-light); font-weight:600; white-space:nowrap; }
+    @media (max-width:760px){ .gallery { grid-template-columns:repeat(2,1fr); } }
+    @media (max-width:560px){
+      .ebar-msg .ebar-extra { display:none; }
+      #ebar { --ebar-h:42px; }
+      .ebar-in { gap:0.6rem; padding:0 2.4rem; }
+      .ebar-msg { font-size:0.8rem; }
+    }
+    @media (max-width:440px){ .gallery { grid-template-columns:1fr; } }
+
     @media (prefers-reduced-motion:reduce){
       *,*::before,*::after { animation-duration:0.001ms !important; transition-duration:0.001ms !important; scroll-behavior:auto !important; }
       .reveal { opacity:1 !important; transform:none !important; }
-      .pulse-dot { animation:none !important; }
+      .pulse-dot, .ebar-dot { animation:none !important; }
     }
   </style>
 </head>
@@ -354,6 +414,18 @@
   <div class="bg-fx"></div>
   <div class="grain"></div>
   <div id="progress" aria-hidden="true"></div>
+
+  <!-- ── Emergency call bar ── -->
+  <div id="ebar" role="region" aria-label="Emergency contact">
+    <div class="wrap ebar-in">
+      <span class="ebar-msg"><span class="ebar-dot" aria-hidden="true"></span> Roof leaking or storm damage?<span class="ebar-extra">&nbsp;We answer <strong>24/7</strong> — don't wait for the next downpour.</span></span>
+      <a href="tel:+14074610234" class="ebar-call">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        Call (407) 461-0234
+      </a>
+      <button class="ebar-x" id="ebarClose" aria-label="Dismiss emergency banner">&times;</button>
+    </div>
+  </div>
 
   <!-- ── Nav ── -->
   <header id="header">
@@ -478,44 +550,56 @@
       </div>
       <div class="grid-2">
         <div class="card reveal">
-          <div class="card-icon">🏠</div>
-          <h3>Roof Replacement</h3>
-          <p>Full tear-off and replacement built to outlast the next storm — shingle, tile, and metal.</p>
-          <ul>
-            <li>Architectural &amp; impact-rated shingles</li>
-            <li>Tile and standing-seam metal</li>
-            <li>Lifetime workmanship warranty</li>
-          </ul>
+          <div class="card-media"><img src="assets/img/svc-replace.jpg" alt="Newly replaced shingle roof on a Central Florida home" loading="lazy" /></div>
+          <div class="card-body">
+            <div class="card-icon">🏠</div>
+            <h3>Roof Replacement</h3>
+            <p>Full tear-off and replacement built to outlast the next storm — shingle, tile, and metal.</p>
+            <ul>
+              <li>Architectural &amp; impact-rated shingles</li>
+              <li>Tile and standing-seam metal</li>
+              <li>Lifetime workmanship warranty</li>
+            </ul>
+          </div>
         </div>
         <div class="card reveal">
-          <div class="card-icon">🔧</div>
-          <h3>Roof Repair &amp; Leaks</h3>
-          <p>Fast, lasting fixes for leaks, missing shingles, and flashing failures — often same-week.</p>
-          <ul>
-            <li>Leak detection &amp; emergency tarping</li>
-            <li>Flashing, vent &amp; valley repair</li>
-            <li>Honest "repair vs. replace" advice</li>
-          </ul>
+          <div class="card-media"><img src="assets/img/svc-repair.jpg" alt="Roofer repairing a leak on a residential roof" loading="lazy" /></div>
+          <div class="card-body">
+            <div class="card-icon">🔧</div>
+            <h3>Roof Repair &amp; Leaks</h3>
+            <p>Fast, lasting fixes for leaks, missing shingles, and flashing failures — often same-week.</p>
+            <ul>
+              <li>Leak detection &amp; emergency tarping</li>
+              <li>Flashing, vent &amp; valley repair</li>
+              <li>Honest "repair vs. replace" advice</li>
+            </ul>
+          </div>
         </div>
         <div class="card reveal">
-          <div class="card-icon">⛈️</div>
-          <h3>Storm &amp; Insurance Claims</h3>
-          <p>We document the damage properly and work directly with your adjuster so your claim gets paid.</p>
-          <ul>
-            <li>Free storm-damage assessment</li>
-            <li>Photo &amp; report documentation</li>
-            <li>Adjuster meetings handled for you</li>
-          </ul>
+          <div class="card-media"><img src="assets/img/svc-storm.jpg" alt="Crew working on storm-damaged roof under cloudy sky" loading="lazy" /></div>
+          <div class="card-body">
+            <div class="card-icon">⛈️</div>
+            <h3>Storm &amp; Insurance Claims</h3>
+            <p>We document the damage properly and work directly with your adjuster so your claim gets paid.</p>
+            <ul>
+              <li>Free storm-damage assessment</li>
+              <li>Photo &amp; report documentation</li>
+              <li>Adjuster meetings handled for you</li>
+            </ul>
+          </div>
         </div>
         <div class="card reveal">
-          <div class="card-icon">🔍</div>
-          <h3>Inspections &amp; Maintenance</h3>
-          <p>Catch small issues before they become five-figure problems with scheduled check-ups.</p>
-          <ul>
-            <li>Free 20-point roof inspection</li>
-            <li>Real-estate &amp; pre-sale reports</li>
-            <li>Annual maintenance plans</li>
-          </ul>
+          <div class="card-media"><img src="assets/img/svc-inspect.jpg" alt="Close-up of roof shingles during inspection" loading="lazy" /></div>
+          <div class="card-body">
+            <div class="card-icon">🔍</div>
+            <h3>Inspections &amp; Maintenance</h3>
+            <p>Catch small issues before they become five-figure problems with scheduled check-ups.</p>
+            <ul>
+              <li>Free 20-point roof inspection</li>
+              <li>Real-estate &amp; pre-sale reports</li>
+              <li>Annual maintenance plans</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -597,6 +681,25 @@
           <blockquote>"What sold me was how fast and clear they were. No phone tag, no vague quotes. Honest crew, spotless cleanup, fair price."</blockquote>
           <div class="who"><div class="av">JC</div><div><div class="nm">James C.</div><div class="rl">Kissimmee, FL</div></div></div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Recent work gallery ── -->
+  <section id="work" style="padding-top:0;">
+    <div class="wrap">
+      <div class="center" style="margin-bottom:3rem;">
+        <span class="eyebrow reveal">Recent work</span>
+        <h2 class="h2 reveal">Roofs we've finished across Central Florida.</h2>
+        <p class="lead reveal">Real homes, real crews — from emergency storm repairs to full replacements.</p>
+      </div>
+      <div class="gallery">
+        <figure class="gtile reveal"><img src="assets/img/work1.jpg" alt="Restored tile roof against a clear sky" loading="lazy" /><figcaption><span>Tile roof restoration</span><span class="gloc">Orlando</span></figcaption></figure>
+        <figure class="gtile reveal"><img src="assets/img/svc-replace.jpg" alt="Full shingle roof replacement on a two-story home" loading="lazy" /><figcaption><span>Full replacement</span><span class="gloc">Winter Park</span></figcaption></figure>
+        <figure class="gtile reveal"><img src="assets/img/work2.jpg" alt="New terracotta tile roof installation in progress" loading="lazy" /><figcaption><span>New tile install</span><span class="gloc">Lake Mary</span></figcaption></figure>
+        <figure class="gtile reveal"><img src="assets/img/hero-alt.jpg" alt="Roofer installing shingles with safety gear" loading="lazy" /><figcaption><span>Storm repair crew</span><span class="gloc">Kissimmee</span></figcaption></figure>
+        <figure class="gtile reveal"><img src="assets/img/work3.jpg" alt="Detailed architectural shingle roofline" loading="lazy" /><figcaption><span>Architectural shingles</span><span class="gloc">Sanford</span></figcaption></figure>
+        <figure class="gtile reveal"><img src="assets/img/work4.jpg" alt="Finished red tile roof on a Florida home" loading="lazy" /><figcaption><span>Re-roof &amp; cleanup</span><span class="gloc">Oviedo</span></figcaption></figure>
       </div>
     </div>
   </section>
@@ -805,6 +908,19 @@
 
     /* Year */
     document.getElementById('year').textContent = new Date().getFullYear();
+
+    /* Emergency bar dismiss (persists for the session) */
+    (function(){
+      var ebar = document.getElementById('ebar');
+      var x = document.getElementById('ebarClose');
+      if(!ebar || !x) return;
+      try { if(sessionStorage.getItem('ebar_dismissed') === '1'){ ebar.classList.add('ebar-hidden'); document.body.classList.add('ebar-off'); } } catch(e){}
+      x.addEventListener('click', function(){
+        ebar.classList.add('ebar-hidden');
+        document.body.classList.add('ebar-off');
+        try { sessionStorage.setItem('ebar_dismissed','1'); } catch(e){}
+      });
+    })();
 
     /* Header shadow + progress */
     var header = document.getElementById('header');
