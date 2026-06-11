@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gravity Roofing — Owner Dashboard</title>
+  <meta name="robots" content="noindex" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23FF6A3D'/%3E%3Cpath d='M16 6 L26 15 h-3 v11 h-14 v-11 h-3 z' fill='white'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --brand:#FF6A3D; --brand-light:#FF9166; --brand-dark:#E0481B; --brand-glow:rgba(255,106,61,0.22);
+      --accent:#39D0C8; --warn:#F5B13D; --good:#4ED88A;
+      --surface:#0A0C12; --surface-el:#10131C; --surface-fl:#171B27; --surface-hi:#202635;
+      --border:rgba(255,255,255,0.07); --border-hi:rgba(255,106,61,0.38);
+      --text:#F3F1ED; --text-muted:#7C8499; --text-soft:#AEB6C7;
+      --radius:12px; --radius-lg:18px;
+      --shadow-card:0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.35);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter',system-ui,sans-serif; background:var(--surface); color:var(--text); -webkit-font-smoothing:antialiased; line-height:1.6; }
+    body::before { content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+      background:radial-gradient(700px 420px at 90% -8%, rgba(255,106,61,0.12), transparent 60%), radial-gradient(640px 460px at 0% 0%, rgba(57,208,200,0.06), transparent 55%); }
+    h1,h2,h3,.disp { font-family:'Sora',sans-serif; letter-spacing:-0.02em; }
+    a { color:inherit; }
+
+    /* Topbar */
+    .topbar { position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between;
+      padding:0.85rem 1.5rem; background:rgba(10,12,18,0.85); backdrop-filter:blur(14px); border-bottom:1px solid var(--border); }
+    .brand { display:flex; align-items:center; gap:0.65rem; font-family:'Sora'; font-weight:700; font-size:1.02rem; text-decoration:none; }
+    .brand .mark { width:32px; height:32px; border-radius:9px; background:linear-gradient(140deg,var(--brand),var(--brand-dark)); display:flex; align-items:center; justify-content:center; box-shadow:0 4px 14px var(--brand-glow); }
+    .brand .tag { font-family:'Inter'; font-size:0.7rem; color:var(--text-muted); font-weight:500; background:var(--surface-fl); border:1px solid var(--border); padding:0.15rem 0.5rem; border-radius:6px; margin-left:0.4rem; }
+    .top-right { display:flex; align-items:center; gap:0.7rem; }
+    .live { display:inline-flex; align-items:center; gap:0.4rem; font-size:0.78rem; color:var(--good); font-weight:600; }
+    .live .d { width:8px; height:8px; border-radius:50%; background:var(--good); box-shadow:0 0 0 0 rgba(78,216,138,0.6); animation:lp 2s infinite; }
+    @keyframes lp { 0%{box-shadow:0 0 0 0 rgba(78,216,138,0.5);} 70%{box-shadow:0 0 0 7px rgba(78,216,138,0);} 100%{box-shadow:0 0 0 0 rgba(78,216,138,0);} }
+    .top-link { font-size:0.85rem; color:var(--text-soft); text-decoration:none; display:inline-flex; align-items:center; gap:0.35rem; padding:0.5rem 0.8rem; border:1px solid var(--border); border-radius:9px; transition:border-color 160ms ease, color 160ms ease; }
+    .top-link:hover { border-color:var(--border-hi); color:var(--text); }
+    .top-link:focus-visible { outline:2px solid var(--brand-light); outline-offset:2px; }
+    .who { display:flex; align-items:center; gap:0.55rem; }
+    .who .pic { width:34px; height:34px; border-radius:50%; background:linear-gradient(140deg,#5566aa,#33406e); display:flex; align-items:center; justify-content:center; font-family:'Sora'; font-weight:700; font-size:0.85rem; }
+    .who .nm { font-size:0.84rem; font-weight:600; line-height:1.1; }
+    .who .rl { font-size:0.72rem; color:var(--text-muted); }
+
+    .wrap { max-width:1240px; margin:0 auto; padding:1.75rem 1.5rem 4rem; }
+    .greet { display:flex; align-items:flex-end; justify-content:space-between; gap:1rem; flex-wrap:wrap; margin-bottom:1.5rem; }
+    .greet h1 { font-size:1.6rem; font-weight:800; }
+    .greet .sub { color:var(--text-muted); font-size:0.9rem; margin-top:0.2rem; }
+    .greet-actions { display:flex; gap:0.55rem; flex-wrap:wrap; }
+    .btn { font-family:'Sora'; font-weight:600; font-size:0.84rem; padding:0.6rem 1rem; border-radius:10px; border:1px solid var(--border); background:var(--surface-fl); color:var(--text); cursor:pointer; display:inline-flex; align-items:center; gap:0.45rem; text-decoration:none; transition:transform 160ms ease, border-color 160ms ease, background 160ms ease; }
+    .btn:hover { transform:translateY(-2px); border-color:var(--border-hi); }
+    .btn:active { transform:translateY(0); }
+    .btn:focus-visible { outline:2px solid var(--brand-light); outline-offset:2px; }
+    .btn-primary { background:var(--brand); color:#160a05; border-color:transparent; box-shadow:0 4px 16px var(--brand-glow); }
+    .btn-primary:hover { background:var(--brand-light); }
+
+    /* KPI */
+    .kpis { display:grid; grid-template-columns:repeat(5,1fr); gap:1rem; margin-bottom:1.5rem; }
+    .kpi { background:var(--surface-el); border:1px solid var(--border); border-radius:var(--radius-lg); padding:1.25rem; position:relative; overflow:hidden; }
+    .kpi::after { content:""; position:absolute; right:-20px; top:-20px; width:80px; height:80px; border-radius:50%; background:radial-gradient(circle, var(--brand-glow), transparent 70%); opacity:0.5; }
+    .kpi .lbl { font-size:0.78rem; color:var(--text-muted); display:flex; align-items:center; gap:0.4rem; }
+    .kpi .lbl svg { color:var(--brand-light); }
+    .kpi .val { font-family:'Sora'; font-weight:800; font-size:1.9rem; margin-top:0.4rem; line-height:1; }
+    .kpi .delta { font-size:0.76rem; font-weight:600; margin-top:0.45rem; display:inline-flex; align-items:center; gap:0.25rem; }
+    .kpi .delta.up { color:var(--good); } .kpi .delta.flat { color:var(--text-muted); }
+
+    .grid { display:grid; grid-template-columns:1.65fr 1fr; gap:1.25rem; align-items:start; }
+    .card { background:var(--surface-el); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; }
+    .card-head { display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:1.1rem 1.25rem; border-bottom:1px solid var(--border); }
+    .card-head h2 { font-size:1.02rem; font-weight:700; }
+    .card-head .meta { font-size:0.78rem; color:var(--text-muted); }
+    .stack { display:flex; flex-direction:column; gap:1.25rem; }
+
+    /* Leads table */
+    .tbl { width:100%; border-collapse:collapse; font-size:0.86rem; }
+    .tbl th { text-align:left; font-weight:600; color:var(--text-muted); font-size:0.74rem; text-transform:uppercase; letter-spacing:0.05em; padding:0.7rem 1.25rem; border-bottom:1px solid var(--border); }
+    .tbl td { padding:0.85rem 1.25rem; border-bottom:1px solid var(--border); vertical-align:middle; }
+    .tbl tr:last-child td { border-bottom:none; }
+    .tbl tr.fresh td { animation:flashrow 1.6s ease; }
+    @keyframes flashrow { 0%{ background:rgba(255,106,61,0.18); } 100%{ background:transparent; } }
+    .lead-name { font-weight:600; }
+    .lead-sub { font-size:0.76rem; color:var(--text-muted); }
+    .chan { display:inline-flex; align-items:center; gap:0.4rem; font-size:0.78rem; font-weight:600; padding:0.25rem 0.6rem; border-radius:100px; border:1px solid var(--border); }
+    .chan.bot { color:var(--accent); } .chan.bot .cd{ background:var(--accent); }
+    .chan.form { color:var(--brand-light); } .chan.form .cd{ background:var(--brand-light); }
+    .chan.call { color:var(--warn); } .chan.call .cd{ background:var(--warn); }
+    .chan .cd { width:7px; height:7px; border-radius:50%; }
+    .badge { font-size:0.74rem; font-weight:700; padding:0.25rem 0.6rem; border-radius:7px; }
+    .badge.New { background:rgba(255,106,61,0.16); color:var(--brand-light); }
+    .badge.Booked { background:rgba(57,208,200,0.14); color:var(--accent); }
+    .badge.Contacted { background:rgba(245,177,61,0.14); color:var(--warn); }
+    .badge.Won { background:rgba(78,216,138,0.15); color:var(--good); }
+    .ago { color:var(--text-muted); font-size:0.78rem; white-space:nowrap; }
+
+    /* Bar chart */
+    .chart { display:flex; align-items:flex-end; gap:0.6rem; height:150px; padding:1.25rem; }
+    .bar-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:0.5rem; height:100%; justify-content:flex-end; }
+    .bar { width:100%; max-width:34px; border-radius:7px 7px 3px 3px; background:linear-gradient(180deg, var(--brand-light), var(--brand-dark)); transition:height 900ms cubic-bezier(0.22,1,0.36,1); }
+    .bar-col.today .bar { background:linear-gradient(180deg, var(--accent), #1f9b94); }
+    .bar-lbl { font-size:0.72rem; color:var(--text-muted); }
+    .bar-val { font-size:0.74rem; font-weight:700; color:var(--text-soft); }
+
+    /* Channel breakdown */
+    .chan-row { padding:0.6rem 1.25rem; }
+    .chan-row:first-child { padding-top:1.1rem; }
+    .chan-row .top { display:flex; justify-content:space-between; font-size:0.82rem; margin-bottom:0.4rem; }
+    .chan-row .pct { color:var(--text-muted); }
+    .track { height:8px; background:var(--surface-hi); border-radius:100px; overflow:hidden; }
+    .fill { height:100%; border-radius:100px; transition:width 950ms cubic-bezier(0.22,1,0.36,1); }
+
+    /* Activity feed */
+    .feed { padding:0.6rem 0; }
+    .fitem { display:flex; gap:0.8rem; padding:0.7rem 1.25rem; }
+    .fitem .ficon { flex:none; width:32px; height:32px; border-radius:9px; background:var(--surface-fl); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:0.95rem; }
+    .fitem .ftxt { font-size:0.84rem; }
+    .fitem .ftxt b { font-weight:600; }
+    .fitem .ftime { font-size:0.74rem; color:var(--text-muted); margin-top:0.1rem; }
+
+    .demo-note { margin-top:1.5rem; text-align:center; font-size:0.78rem; color:var(--text-muted); }
+    .demo-note code { background:var(--surface-fl); padding:0.1rem 0.4rem; border-radius:5px; border:1px solid var(--border); }
+
+    @media (max-width:1000px){ .kpis { grid-template-columns:repeat(2,1fr); } .grid { grid-template-columns:1fr; } }
+    @media (max-width:620px){
+      .tbl .hide-sm { display:none; }
+      .who .nm, .who .rl { display:none; }
+      .greet h1 { font-size:1.3rem; }
+    }
+    @media (prefers-reduced-motion:reduce){ *{ animation:none !important; transition:none !important; } }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <a class="brand" href="index.html">
+      <span class="mark"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9h14v-9"/><path d="M9.5 19v-5h5v5"/></svg></span>
+      Gravity Roofing <span class="tag">Owner Dashboard</span>
+    </a>
+    <div class="top-right">
+      <span class="live"><span class="d"></span> Live</span>
+      <a class="top-link" href="index.html" target="_blank" rel="noopener">View website
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+      </a>
+      <div class="who">
+        <span class="pic">RG</span>
+        <div><div class="nm">Ray Gravity</div><div class="rl">Owner</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="greet">
+      <div>
+        <h1 id="hello">Good morning, Ray 👋</h1>
+        <div class="sub" id="todayline">Here's everything your website captured.</div>
+      </div>
+      <div class="greet-actions">
+        <button class="btn" id="addTest">+ Simulate lead</button>
+        <button class="btn" id="clearBtn">Clear demo data</button>
+        <a class="btn btn-primary" href="index.html#book" target="_blank" rel="noopener">Open booking page</a>
+      </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpis">
+      <div class="kpi">
+        <div class="lbl"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg> New leads today</div>
+        <div class="val" id="kNew">0</div>
+        <div class="delta up" id="kNewD">▲ vs 4 avg</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Booked this week</div>
+        <div class="val" id="kBooked">31</div>
+        <div class="delta up">▲ 18% vs last wk</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Avg reply time</div>
+        <div class="val"><span id="kReply">47</span>s</div>
+        <div class="delta up">▲ was 31 hrs</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg> Answer rate</div>
+        <div class="val"><span id="kAns">100</span>%</div>
+        <div class="delta up">▲ was 54%</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Pipeline value</div>
+        <div class="val">$<span id="kPipe">186</span>k</div>
+        <div class="delta up">▲ 22% vs last wk</div>
+      </div>
+    </div>
+
+    <!-- Main grid -->
+    <div class="grid">
+      <div class="card">
+        <div class="card-head">
+          <h2>Recent leads</h2>
+          <span class="meta" id="leadCount">—</span>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>Customer</th>
+                <th class="hide-sm">Channel</th>
+                <th class="hide-sm">Service</th>
+                <th>Status</th>
+                <th>When</th>
+              </tr>
+            </thead>
+            <tbody id="leadRows"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="stack">
+        <div class="card">
+          <div class="card-head"><h2>Leads this week</h2><span class="meta">Mon–Sun</span></div>
+          <div class="chart" id="chart"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h2>Where leads come from</h2></div>
+          <div id="channels" style="padding-bottom:1.1rem;"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h2>Live activity</h2></div>
+          <div class="feed" id="feed"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-note">
+      Demo dashboard · leads booked on the <a href="index.html" style="color:var(--brand-light);">live site</a> (form or AI chatbot) appear here instantly.
+      Data is stored locally in your browser under <code>gravity_leads</code>.
+    </div>
+  </div>
+
+  <script>
+  (function(){
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var KEY = 'gravity_leads';
+    var now = Date.now();
+    var MIN = 60000, HR = 3600000;
+
+    /* Seed leads (sample history) */
+    var seed = [
+      { name:'Maria R.',   phone:'(407) 555-0142', service:'Storm / insurance claim', area:'Orlando',      channel:'AI chatbot',   status:'Booked',    ts: now - 22*MIN },
+      { name:'Derek T.',   phone:'(407) 555-0119', service:'Roof leak / repair',      area:'Winter Park',  channel:'Tap-to-call',  status:'Contacted', ts: now - 1*HR - 8*MIN },
+      { name:'James C.',   phone:'(407) 555-0188', service:'Full roof replacement',   area:'Kissimmee',    channel:'Website form', status:'Won',       ts: now - 3*HR },
+      { name:'Olivia P.',  phone:'(407) 555-0173', service:'Free inspection',         area:'Sanford',      channel:'AI chatbot',   status:'Booked',    ts: now - 5*HR },
+      { name:'Andre W.',   phone:'(407) 555-0156', service:'Roof leak / repair',      area:'Apopka',       channel:'Tap-to-call',  status:'Contacted', ts: now - 6*HR - 20*MIN },
+      { name:'Nina S.',    phone:'(407) 555-0131', service:'Storm / insurance claim', area:'Oviedo',       channel:'Website form', status:'Booked',    ts: now - 21*HR },
+      { name:'Carlos V.',  phone:'(407) 555-0164', service:'Free inspection',         area:'Clermont',     channel:'AI chatbot',   status:'Won',       ts: now - 26*HR },
+      { name:'Beth A.',    phone:'(407) 555-0109', service:'Full roof replacement',   area:'Lake Mary',    channel:'Website form', status:'Contacted', ts: now - 30*HR }
+    ];
+
+    function load(){ try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch(e){ return []; } }
+    function chanClass(c){ c=(c||'').toLowerCase(); if(c.indexOf('chat')>-1||c.indexOf('bot')>-1) return 'bot'; if(c.indexOf('call')>-1||c.indexOf('phone')>-1) return 'call'; return 'form'; }
+    function chanLabel(c){ var k=chanClass(c); return k==='bot'?'AI chatbot':(k==='call'?'Tap-to-call':'Website form'); }
+    function initials(n){ var p=(n||'?').trim().split(/\s+/); return ((p[0]||'?')[0] + (p[1]?p[1][0]:'')).toUpperCase(); }
+    function ago(ts){ var s=Math.max(1,Math.floor((Date.now()-ts)/1000));
+      if(s<60) return s+'s ago'; var m=Math.floor(s/60); if(m<60) return m+'m ago';
+      var h=Math.floor(m/60); if(h<24) return h+'h ago'; return Math.floor(h/24)+'d ago'; }
+
+    function countUp(el, target, dur, decimals){
+      decimals = decimals||0; dur = dur||1100;
+      if(reduce){ el.textContent = target.toFixed(decimals); return; }
+      var start=null;
+      function step(t){ if(start===null) start=t; var p=Math.min(1,(t-start)/dur); var e=1-Math.pow(1-p,3);
+        el.textContent = (target*e).toLocaleString('en-US',{minimumFractionDigits:decimals,maximumFractionDigits:decimals});
+        if(p<1) requestAnimationFrame(step); else el.textContent = target.toLocaleString('en-US',{minimumFractionDigits:decimals,maximumFractionDigits:decimals}); }
+      requestAnimationFrame(step);
+    }
+
+    /* ── Render leads table ── */
+    function render(flashFirst){
+      var stored = load().map(function(d){ return { name:d.name, phone:d.phone, service:d.service, area:d.area, channel:d.channel, status:d.status||'New', ts:d.ts || (d.id||Date.now()), live:true }; });
+      var all = stored.concat(seed).sort(function(a,b){ return b.ts - a.ts; });
+      var rows = document.getElementById('leadRows');
+      rows.innerHTML = '';
+      all.slice(0,12).forEach(function(d, i){
+        var cc = chanClass(d.channel);
+        var tr = document.createElement('tr');
+        if(flashFirst && d.live && i===0) tr.className = 'fresh';
+        tr.innerHTML =
+          '<td><div class="lead-name">'+esc(d.name)+'</div><div class="lead-sub">'+esc(d.phone)+(d.area?' · '+esc(d.area):'')+'</div></td>'+
+          '<td class="hide-sm"><span class="chan '+cc+'"><span class="cd"></span>'+chanLabel(d.channel)+'</span></td>'+
+          '<td class="hide-sm">'+esc(d.service||'—')+'</td>'+
+          '<td><span class="badge '+(d.status||'New')+'">'+(d.status||'New')+'</span></td>'+
+          '<td class="ago">'+ago(d.ts)+'</td>';
+        rows.appendChild(tr);
+      });
+      document.getElementById('leadCount').textContent = all.length + ' total · ' + stored.length + ' from website';
+
+      // KPIs that react to new website leads
+      var newToday = 14 + stored.length;
+      countUp(document.getElementById('kNew'), newToday, 900);
+      document.getElementById('kNewD').textContent = '▲ ' + Math.round((newToday/4 - 1)*100) + '% vs 4 avg';
+
+      renderFeed(all);
+    }
+    function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+    /* ── Activity feed ── */
+    function renderFeed(all){
+      var feed = document.getElementById('feed'); feed.innerHTML='';
+      var items = all.slice(0,5).map(function(d){
+        var cc=chanClass(d.channel);
+        var ic = cc==='bot'?'💬':(cc==='call'?'📞':'📝');
+        var verb = cc==='bot'?'booked via AI chat':(cc==='call'?'tapped to call':'submitted the form');
+        return { ic:ic, html:'<b>'+esc(d.name)+'</b> '+verb+' · '+esc(d.service||''), ts:d.ts };
+      });
+      items.forEach(function(it){
+        var row=document.createElement('div'); row.className='fitem';
+        row.innerHTML='<div class="ficon">'+it.ic+'</div><div><div class="ftxt">'+it.html+'</div><div class="ftime">'+ago(it.ts)+'</div></div>';
+        feed.appendChild(row);
+      });
+    }
+
+    /* ── Weekly chart ── */
+    function renderChart(){
+      var data = [12,17,14,21,19,9,16]; // Mon..Sun
+      var labels = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+      var today = new Date().getDay(); today = today===0?6:today-1; // make Mon=0
+      data[today] = data[today] + load().length;
+      var max = Math.max.apply(null, data);
+      var chart = document.getElementById('chart'); chart.innerHTML='';
+      data.forEach(function(v,i){
+        var col=document.createElement('div'); col.className='bar-col'+(i===today?' today':'');
+        col.innerHTML='<div class="bar-val">'+v+'</div><div class="bar" style="height:0%"></div><div class="bar-lbl">'+labels[i]+'</div>';
+        chart.appendChild(col);
+        var bar=col.querySelector('.bar');
+        setTimeout(function(){ bar.style.height = Math.max(6,(v/max)*100)+'%'; }, 60 + i*70);
+      });
+    }
+
+    /* ── Channels ── */
+    function renderChannels(){
+      var stored = load();
+      var base = { bot:34, call:38, form:28 };
+      stored.forEach(function(d){ var k=chanClass(d.channel); base[k]+=2; });
+      var tot = base.bot+base.call+base.form;
+      var rows = [
+        { k:'call', label:'Tap-to-call', color:'var(--warn)', v:Math.round(base.call/tot*100) },
+        { k:'bot',  label:'AI chatbot',  color:'var(--accent)', v:Math.round(base.bot/tot*100) },
+        { k:'form', label:'Website form',color:'var(--brand-light)', v:Math.round(base.form/tot*100) }
+      ];
+      var wrap = document.getElementById('channels'); wrap.innerHTML='';
+      rows.forEach(function(r,i){
+        var el=document.createElement('div'); el.className='chan-row';
+        el.innerHTML='<div class="top"><span>'+r.label+'</span><span class="pct">'+r.v+'%</span></div><div class="track"><div class="fill" style="width:0%;background:'+r.color+'"></div></div>';
+        wrap.appendChild(el);
+        var fill=el.querySelector('.fill');
+        setTimeout(function(){ fill.style.width=r.v+'%'; }, 80+i*90);
+      });
+    }
+
+    /* ── Static KPI count-ups ── */
+    countUp(document.getElementById('kBooked'), 31, 1100);
+    countUp(document.getElementById('kReply'), 47, 1100);
+    countUp(document.getElementById('kAns'), 100, 1200);
+    countUp(document.getElementById('kPipe'), 186, 1300);
+
+    /* greeting by time */
+    var hh=new Date().getHours();
+    document.getElementById('hello').textContent = (hh<12?'Good morning':hh<18?'Good afternoon':'Good evening')+', Ray 👋';
+    document.getElementById('todayline').textContent = new Date().toLocaleDateString('en-US',{weekday:'long', month:'long', day:'numeric'}) + " · here's everything your website captured.";
+
+    function renderAll(flash){ render(flash); renderChart(); renderChannels(); }
+    renderAll(false);
+
+    /* ── Live updates from the website (other tab) ── */
+    window.addEventListener('storage', function(e){ if(e.key===KEY) renderAll(true); });
+    document.addEventListener('visibilitychange', function(){ if(!document.hidden) renderAll(false); });
+    // refresh "x ago" labels periodically
+    setInterval(function(){ render(false); }, 30000);
+
+    /* ── Demo controls ── */
+    var SAMPLES = [
+      {name:'Jordan Lee', service:'Roof leak / repair', area:'Winter Garden'},
+      {name:'Priya N.', service:'Free inspection', area:'Altamonte Springs'},
+      {name:'Tom W.', service:'Storm / insurance claim', area:'St. Cloud'},
+      {name:'Grace K.', service:'Full roof replacement', area:'Oviedo'}
+    ];
+    document.getElementById('addTest').addEventListener('click', function(){
+      var s = SAMPLES[Math.floor(Math.random()*SAMPLES.length)];
+      var arr = load();
+      arr.unshift({ id:Date.now(), name:s.name, phone:'(407) 555-0'+(100+Math.floor(Math.random()*899)), service:s.service, area:s.area, channel: Math.random()>0.5?'AI chatbot':'Website form', status:'New', ts:Date.now() });
+      try { localStorage.setItem(KEY, JSON.stringify(arr.slice(0,60))); } catch(e){}
+      renderAll(true);
+    });
+    document.getElementById('clearBtn').addEventListener('click', function(){
+      try { localStorage.removeItem(KEY); } catch(e){}
+      renderAll(false);
+    });
+  })();
+  </script>
+</body>
+</html>
