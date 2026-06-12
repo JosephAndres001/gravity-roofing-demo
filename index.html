@@ -1049,5 +1049,232 @@
   })();
   </script>
 
+  <!-- ══ Roofing assistant chat ══ -->
+  <style>
+    .gchat-fab{ position:fixed; right:22px; bottom:22px; z-index:130; width:60px; height:60px; border-radius:50%; border:none; cursor:pointer; background:linear-gradient(145deg,var(--brand-light),var(--brand) 55%,var(--brand-dark)); color:#fff; display:grid; place-items:center; box-shadow:0 2px 6px rgba(0,0,0,0.4),0 10px 26px rgba(255,106,61,0.34); transition:transform .2s cubic-bezier(0.34,1.56,0.64,1),box-shadow .25s ease; }
+    .gchat-fab:hover{ transform:translateY(-3px) scale(1.04); box-shadow:0 4px 10px rgba(0,0,0,0.45),0 16px 38px rgba(255,106,61,0.45); }
+    .gchat-fab:active{ transform:translateY(0) scale(.98); }
+    .gchat-fab:focus-visible{ outline:none; box-shadow:0 0 0 4px rgba(255,106,61,0.4),0 10px 26px rgba(255,106,61,0.34); }
+    .gchat-fab-ic{ position:absolute; display:grid; place-items:center; transition:transform .25s cubic-bezier(0.34,1.56,0.64,1),opacity .2s ease; }
+    .gchat-fab-close{ opacity:0; transform:rotate(-90deg) scale(.6); }
+    .gchat-fab.open .gchat-fab-ic:not(.gchat-fab-close){ opacity:0; transform:rotate(90deg) scale(.6); }
+    .gchat-fab.open .gchat-fab-close{ opacity:1; transform:rotate(0) scale(1); }
+    .gchat-fab-dot{ position:absolute; top:11px; right:11px; width:11px; height:11px; border-radius:50%; background:var(--accent); border:2px solid var(--brand-dark); animation:gchatPulse 2s ease-in-out infinite; }
+    @keyframes gchatPulse{ 0%,100%{ transform:scale(1); opacity:1; } 50%{ transform:scale(1.25); opacity:.55; } }
+    .gchat-panel{ position:fixed; right:22px; bottom:94px; z-index:130; width:372px; max-width:calc(100vw - 32px); height:544px; max-height:calc(100vh - 132px); background:var(--surface-el); border:1px solid var(--border); border-radius:20px; box-shadow:0 1px 2px rgba(0,0,0,0.3),0 18px 48px rgba(0,0,0,0.55),0 24px 70px rgba(255,106,61,0.12); display:flex; flex-direction:column; overflow:hidden; transform-origin:bottom right; transform:translateY(14px) scale(.92); opacity:0; pointer-events:none; transition:transform .34s cubic-bezier(0.34,1.56,0.64,1),opacity .22s ease; }
+    .gchat-panel.open{ transform:translateY(0) scale(1); opacity:1; pointer-events:auto; }
+    .gchat-head{ display:flex; align-items:center; gap:11px; padding:15px 16px; border-bottom:1px solid var(--border); background:linear-gradient(180deg,rgba(255,106,61,0.10),transparent); }
+    .gchat-avatar{ width:40px; height:40px; border-radius:50%; flex:none; display:grid; place-items:center; font-family:'Sora',sans-serif; font-weight:800; font-size:.85rem; color:#fff; background:linear-gradient(145deg,var(--brand-light),var(--brand-dark)); box-shadow:0 4px 12px rgba(255,106,61,0.4); }
+    .gchat-head-meta{ display:flex; flex-direction:column; line-height:1.25; flex:1; min-width:0; }
+    .gchat-head-name{ font-family:'Sora',sans-serif; font-weight:700; font-size:.98rem; }
+    .gchat-head-sub{ font-size:.76rem; color:var(--text-muted); display:flex; align-items:center; gap:6px; }
+    .gchat-head-sub::before{ content:""; width:7px; height:7px; border-radius:50%; background:#46d39a; box-shadow:0 0 0 3px rgba(70,211,154,0.18); }
+    .gchat-x{ background:transparent; border:none; color:var(--text-muted); cursor:pointer; width:30px; height:30px; border-radius:8px; display:grid; place-items:center; transition:background .2s ease,color .2s ease; }
+    .gchat-x:hover{ background:var(--surface-hi); color:var(--text); }
+    .gchat-x:focus-visible{ outline:none; box-shadow:0 0 0 3px rgba(255,106,61,0.4); }
+    .gchat-log{ flex:1; overflow-y:auto; padding:18px 16px; display:flex; flex-direction:column; gap:10px; scrollbar-width:thin; scrollbar-color:var(--surface-hi) transparent; }
+    .gchat-log::-webkit-scrollbar{ width:8px; } .gchat-log::-webkit-scrollbar-thumb{ background:var(--surface-hi); border-radius:8px; }
+    .gchat-msg{ display:flex; } .gchat-bot{ justify-content:flex-start; } .gchat-user{ justify-content:flex-end; }
+    .gchat-bubble{ max-width:82%; padding:10px 13px; border-radius:15px; font-size:.9rem; line-height:1.5; animation:gchatIn .35s cubic-bezier(0.34,1.56,0.64,1) both; }
+    .gchat-bot .gchat-bubble{ background:var(--surface-fl); border:1px solid var(--border); border-bottom-left-radius:5px; color:var(--text-soft); }
+    .gchat-user .gchat-bubble{ background:linear-gradient(145deg,var(--brand),var(--brand-dark)); color:#fff; border-bottom-right-radius:5px; }
+    .gchat-tel{ color:var(--brand-light); font-weight:700; white-space:nowrap; text-decoration:none; }
+    @keyframes gchatIn{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:translateY(0); } }
+    .gchat-typing{ display:flex; gap:4px; align-items:center; }
+    .gchat-dot{ width:7px; height:7px; border-radius:50%; background:var(--text-muted); animation:gchatBlink 1.2s infinite; }
+    .gchat-dot:nth-child(2){ animation-delay:.2s; } .gchat-dot:nth-child(3){ animation-delay:.4s; }
+    @keyframes gchatBlink{ 0%,60%,100%{ opacity:.25; transform:translateY(0); } 30%{ opacity:1; transform:translateY(-3px); } }
+    .gchat-chips{ display:flex; flex-wrap:wrap; gap:7px; padding:2px 0 4px; animation:gchatIn .35s ease both; }
+    .gchat-chip{ font-family:'Inter',sans-serif; font-size:.82rem; font-weight:600; color:var(--brand-light); background:rgba(255,106,61,0.08); border:1px solid var(--border-hi); border-radius:999px; padding:7px 13px; cursor:pointer; transition:transform .18s cubic-bezier(0.34,1.56,0.64,1),background .2s ease; }
+    .gchat-chip:hover{ transform:translateY(-2px); background:rgba(255,106,61,0.16); }
+    .gchat-chip:active{ transform:translateY(0); }
+    .gchat-chip:focus-visible{ outline:none; box-shadow:0 0 0 3px rgba(255,106,61,0.35); }
+    .gchat-input{ display:flex; gap:8px; padding:12px 13px; border-top:1px solid var(--border); background:var(--surface-el); }
+    .gchat-input input{ flex:1; min-width:0; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:11px 13px; color:var(--text); font-family:'Inter',sans-serif; font-size:.9rem; transition:border-color .2s ease,box-shadow .2s ease; }
+    .gchat-input input::placeholder{ color:var(--text-muted); }
+    .gchat-input input:focus{ outline:none; border-color:var(--border-hi); box-shadow:0 0 0 3px rgba(255,106,61,0.14); }
+    .gchat-send{ flex:none; width:44px; height:44px; border-radius:12px; border:none; cursor:pointer; color:#fff; display:grid; place-items:center; background:linear-gradient(145deg,var(--brand-light),var(--brand-dark)); box-shadow:0 6px 16px rgba(255,106,61,0.3); transition:transform .18s cubic-bezier(0.34,1.56,0.64,1),box-shadow .2s ease; }
+    .gchat-send:hover{ transform:translateY(-2px); box-shadow:0 9px 22px rgba(255,106,61,0.42); }
+    .gchat-send:active{ transform:translateY(0); }
+    .gchat-send:focus-visible{ outline:none; box-shadow:0 0 0 3px rgba(255,106,61,0.4); }
+    @media (max-width:480px){ .gchat-panel{ right:12px; left:12px; width:auto; bottom:86px; height:min(74vh,544px); } .gchat-fab{ right:16px; bottom:16px; } }
+    @media (prefers-reduced-motion: reduce){ .gchat-panel,.gchat-bubble,.gchat-chips,.gchat-fab,.gchat-fab-ic,.gchat-chip,.gchat-send,.gchat-dot,.gchat-fab-dot{ transition:none !important; animation:none !important; } }
+  </style>
+  <button id="gchatFab" class="gchat-fab" type="button" aria-label="Open roofing chat" aria-expanded="false">
+    <span class="gchat-fab-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span>
+    <span class="gchat-fab-ic gchat-fab-close"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></span>
+    <span class="gchat-fab-dot" aria-hidden="true"></span>
+  </button>
+  <section id="gchatPanel" class="gchat-panel" role="dialog" aria-label="Gravity Roofing chat" aria-hidden="true">
+    <header class="gchat-head">
+      <span class="gchat-avatar">GR</span>
+      <span class="gchat-head-meta">
+        <span class="gchat-head-name">Gravity Roofing</span>
+        <span class="gchat-head-sub">Roofing assistant · here to help</span>
+      </span>
+      <button id="gchatClose" class="gchat-x" type="button" aria-label="Close chat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </header>
+    <div id="gchatLog" class="gchat-log" aria-live="polite"></div>
+    <form id="gchatForm" class="gchat-input" autocomplete="off">
+      <input id="gchatField" type="text" placeholder="Type your message…" aria-label="Type your message">
+      <button type="submit" class="gchat-send" aria-label="Send"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></button>
+    </form>
+  </section>
+  <script>
+  (function(){
+    var fab = document.getElementById("gchatFab");
+    var panel = document.getElementById("gchatPanel");
+    var closeBtn = document.getElementById("gchatClose");
+    var log = document.getElementById("gchatLog");
+    var form = document.getElementById("gchatForm");
+    var field = document.getElementById("gchatField");
+    if(!fab || !panel || !form) return;
+    var PHONE = "(407) 461-0234";
+    var state = "menu";
+    var lead = { name:"", phone:"", issue:"" };
+    var greeted = false;
+
+    function el(tag, cls, txt){ var e=document.createElement(tag); if(cls) e.className=cls; if(txt!=null) e.textContent=txt; return e; }
+    function toBottom(){ log.scrollTop = log.scrollHeight; }
+    function addMsg(text, who){ var row=el("div","gchat-msg gchat-"+who); var b=el("div","gchat-bubble",text); row.appendChild(b); log.appendChild(row); toBottom(); return b; }
+    function addBot(text){ return addMsg(text,"bot"); }
+    function addUser(text){ return addMsg(text,"user"); }
+
+    function typing(cb){
+      var row=el("div","gchat-msg gchat-bot");
+      var t=el("div","gchat-bubble gchat-typing");
+      t.appendChild(el("span","gchat-dot")); t.appendChild(el("span","gchat-dot")); t.appendChild(el("span","gchat-dot"));
+      row.appendChild(t); log.appendChild(row); toBottom();
+      setTimeout(function(){ if(row.parentNode) log.removeChild(row); cb(); }, 540);
+    }
+    function botSay(text, after){ typing(function(){ addBot(text); if(after) after(); }); }
+
+    function chips(items){
+      var wrap=el("div","gchat-chips");
+      items.forEach(function(it){
+        var c=el("button","gchat-chip",it.label); c.type="button";
+        c.addEventListener("click", function(){ if(wrap.parentNode) wrap.remove(); handle(it.label, it.intent); });
+        wrap.appendChild(c);
+      });
+      log.appendChild(wrap); toBottom();
+    }
+    function menuChips(){ chips([
+      {label:"Get a free quote", intent:"quote"},
+      {label:"Services", intent:"services"},
+      {label:"Areas we cover", intent:"areas"},
+      {label:"Financing", intent:"financing"},
+      {label:"Talk to a person", intent:"call"}
+    ]); }
+
+    function greet(){ if(greeted) return; greeted=true; botSay("Hi! 👋 I'm the Gravity Roofing assistant. How can I help with your roof today?", menuChips); }
+
+    function startQuote(){ state="quote_name"; botSay("Happy to help you get a free, no-obligation quote. First — what's your name?"); }
+
+    function detect(text){
+      var t=text.toLowerCase();
+      if(/quote|estimate|inspection/.test(t)) return "quote";
+      if(/price|cost|how much|expensive|cheap/.test(t)) return "pricing";
+      if(/financ|payment|afford|monthly|loan/.test(t)) return "financing";
+      if(/area|where|location|cover|near|serve|orlando/.test(t)) return "areas";
+      if(/leak|repair|fix|replace|shingle|storm|damage|service|gutter/.test(t)) return "services";
+      if(/call|phone|talk|human|person|speak|number/.test(t)) return "call";
+      if(/hello|^hi$|hey|thank/.test(t)) return "hi";
+      return "";
+    }
+
+    function handle(text, intent){ addUser(text); route(intent || detect(text)); }
+
+    function route(intent){
+      switch(intent){
+        case "quote": startQuote(); break;
+        case "services":
+          botSay("We handle it all — roof replacements, leak & storm repairs, insurance-claim roofs, and free inspections — with a licensed, insured Central Florida crew and a lifetime workmanship warranty.", function(){
+            chips([{label:"Get a free quote", intent:"quote"},{label:"Areas we cover", intent:"areas"}]); });
+          break;
+        case "areas":
+          botSay("We cover Orlando and Central Florida — including Winter Park, Kissimmee, Sanford, Lake Mary, Apopka, and Oviedo. Want to check your address with a free quote?", function(){
+            chips([{label:"Get a free quote", intent:"quote"},{label:"Financing", intent:"financing"}]); });
+          break;
+        case "financing":
+          botSay("Yes — we offer flexible financing so you can spread the cost of a new roof over time, with options for most budgets. A free quote is the easiest way to see what you'd qualify for.", function(){
+            chips([{label:"Get a free quote", intent:"quote"},{label:"Services", intent:"services"}]); });
+          break;
+        case "pricing":
+          botSay("Every roof is different, so we price it after a quick free inspection — no guesswork, no pressure. Most repairs and replacements also qualify for financing.", function(){
+            chips([{label:"Get a free quote", intent:"quote"},{label:"Financing", intent:"financing"}]); });
+          break;
+        case "call":
+          typing(function(){
+            var bub=addBot("Prefer to talk it through? You can reach our team at ");
+            var a=el("a","gchat-tel",PHONE); a.href="tel:+14074610234"; bub.appendChild(a);
+            bub.appendChild(document.createTextNode(" — or I can set up your free quote right here."));
+            chips([{label:"Get a free quote", intent:"quote"}]);
+          });
+          break;
+        case "hi":
+          botSay("Hey there! 👋 I can get you a free quote, walk through our services, check your area, or explain financing. What would help most?", menuChips);
+          break;
+        case "bye":
+          botSay("Anytime! 👋 Just tap the chat button whenever you need us. — Gravity Roofing");
+          break;
+        default:
+          botSay("I can get you a free quote, explain our services, check if we cover your area, or connect you with our team. What sounds good?", menuChips);
+      }
+    }
+
+    function step(v){
+      if(state==="quote_name"){
+        addUser(v); lead.name=v; state="quote_phone";
+        var first=v.split(" ")[0];
+        botSay("Thanks, "+first+"! What's the best phone number to reach you?");
+        return;
+      }
+      if(state==="quote_phone"){
+        addUser(v);
+        var digits=v.replace(/\D/g,"");
+        if(digits.length<7){ botSay("Hmm, that doesn't look like a full number — mind re-entering your phone?"); return; }
+        lead.phone=v; state="quote_issue";
+        botSay("Got it. Briefly, what's going on with your roof? (a leak, missing shingles, full replacement, storm damage, or just an inspection)");
+        return;
+      }
+      if(state==="quote_issue"){
+        addUser(v); lead.issue=v; state="done";
+        if(window.saveGravityLead){ window.saveGravityLead({ name:lead.name, phone:lead.phone, service:lead.issue, area:"", channel:"Chat assistant" }); }
+        var first=lead.name.split(" ")[0];
+        botSay("You're all set, "+first+"! ✅ I've logged your request — our team will reach "+lead.phone+" with your free, no-obligation quote. Anything else I can help with?", function(){
+          state="menu";
+          chips([{label:"Services", intent:"services"},{label:"Financing", intent:"financing"},{label:"That's all", intent:"bye"}]);
+        });
+        return;
+      }
+      handle(v);
+    }
+
+    form.addEventListener("submit", function(e){
+      e.preventDefault();
+      var v=(field.value||"").trim();
+      if(!v) return;
+      field.value="";
+      step(v);
+    });
+
+    function openChat(){
+      panel.classList.add("open"); fab.classList.add("open");
+      fab.setAttribute("aria-expanded","true"); panel.setAttribute("aria-hidden","false");
+      var d=fab.querySelector(".gchat-fab-dot"); if(d) d.style.display="none";
+      greet();
+      setTimeout(function(){ try{ field.focus(); }catch(e){} }, 360);
+    }
+    function closeChat(){
+      panel.classList.remove("open"); fab.classList.remove("open");
+      fab.setAttribute("aria-expanded","false"); panel.setAttribute("aria-hidden","true");
+    }
+    fab.addEventListener("click", function(){ panel.classList.contains("open") ? closeChat() : openChat(); });
+    closeBtn.addEventListener("click", closeChat);
+    document.addEventListener("keydown", function(e){ if(e.key==="Escape" && panel.classList.contains("open")) closeChat(); });
+    if((location.hash||"").toLowerCase()==="#chat"){ openChat(); }
+  })();
+  </script>
+
 </body>
 </html>
