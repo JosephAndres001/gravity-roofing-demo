@@ -155,7 +155,6 @@
         <div class="sub" id="todayline">Here's everything your website captured.</div>
       </div>
       <div class="greet-actions">
-        <button class="btn" id="addTest">+ Add lead</button>
         <button class="btn" id="clearBtn">Clear</button>
         <a class="btn btn-primary" href="index.html#book" target="_blank" rel="noopener">Open booking page</a>
       </div>
@@ -376,20 +375,6 @@
     // refresh "x ago" labels periodically
     setInterval(function(){ render(false); }, 30000);
 
-    /* ── Demo controls ── */
-    var SAMPLES = [
-      {name:'Jordan Lee', service:'Roof leak / repair', area:'Winter Garden'},
-      {name:'Priya N.', service:'Free inspection', area:'Altamonte Springs'},
-      {name:'Tom W.', service:'Storm / insurance claim', area:'St. Cloud'},
-      {name:'Grace K.', service:'Full roof replacement', area:'Oviedo'}
-    ];
-    document.getElementById('addTest').addEventListener('click', function(){
-      var s = SAMPLES[Math.floor(Math.random()*SAMPLES.length)];
-      var arr = load();
-      arr.unshift({ id:Date.now(), name:s.name, phone:'(407) 555-0'+(100+Math.floor(Math.random()*899)), service:s.service, area:s.area, channel: Math.random()>0.5?'AI chatbot':'Website form', status:'New', ts:Date.now() });
-      try { localStorage.setItem(KEY, JSON.stringify(arr.slice(0,60))); } catch(e){}
-      renderAll(true);
-    });
     document.getElementById('clearBtn').addEventListener('click', function(){
       try { localStorage.removeItem(KEY); } catch(e){}
       renderAll(false);
