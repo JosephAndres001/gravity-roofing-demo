@@ -1158,68 +1158,124 @@
       });
       log.appendChild(wrap); toBottom();
     }
-    function menuChips(){ chips([
-      {label:"Get a free quote", intent:"quote"},
-      {label:"Services", intent:"services"},
-      {label:"Areas we cover", intent:"areas"},
-      {label:"Financing", intent:"financing"},
-      {label:"Talk to a person", intent:"call"}
-    ]); }
+    function menuChips(){ chipsFor(["quote","services","pricing","areas","financing","call"]); }
 
     function greet(){ if(greeted) return; greeted=true; botSay("Hi! 👋 I'm the Gravity Roofing assistant. How can I help with your roof today?", menuChips); }
 
     function startQuote(){ state="quote_name"; botSay("Happy to help you get a free, no-obligation quote. First — what's your name?"); }
 
+    /* ---- Knowledge base — rule-based NLU, fully client-side (no API) ---- */
+    var KB = [
+      { id:"services", kw:["service","services","what do you do","what do you offer","offer","work you do","jobs"],
+        reply:"We handle it all — roof replacements, leak & storm repairs, insurance-claim roofs, gutters, and free inspections — with a licensed, insured Central Florida crew and a lifetime workmanship warranty.",
+        chips:["quote","replacement","repair","areas"] },
+      { id:"replacement", kw:["replace","replacement","new roof","reroof","re roof","tear off","tearoff","full roof","whole roof"],
+        reply:"Full roof replacements are our specialty — tear-off, a full deck inspection, then a brand-new system installed to code and backed by our lifetime workmanship warranty. Most homes are finished in 1–2 days.",
+        chips:["quote","materials","financing","timeline"] },
+      { id:"repair", kw:["repair","fix","leak","leaking","leaks","patch","missing shingle","damage","damaged","hole","broken"],
+        reply:"We fix leaks, missing or damaged shingles, flashing, and storm damage — repaired properly so the problem stays gone, not just patched over. We'll show you photos of whatever we find.",
+        chips:["quote","emergency","inspection","storm"] },
+      { id:"storm", kw:["storm","hurricane","wind","hail","insurance","claim","adjuster","tree fell","weather damage","damage","damaged"],
+        reply:"Storm and insurance-claim roofs are a big part of what we do. We document the damage the right way, meet your adjuster, and handle the roof so your claim goes smoothly.",
+        chips:["quote","inspection","repair","credentials"] },
+      { id:"inspection", kw:["inspection","inspect","check my roof","look at my roof","assessment","evaluate","free inspection"],
+        reply:"Free roof inspections, no obligation. We get on the roof, photograph everything, and give you an honest read on what — if anything — it actually needs.",
+        chips:["quote","pricing","signs"] },
+      { id:"gutters", kw:["gutter","gutters","downspout","fascia","soffit"],
+        reply:"Yes — we install and repair gutters, downspouts, fascia and soffit alongside roofing work, so water gets carried away from your home the right way.",
+        chips:["quote","services"] },
+      { id:"materials", kw:["material","materials","type of roof","roof type","shingle type","metal","tile","asphalt","architectural","brand","color","gaf"],
+        reply:"We install architectural asphalt shingles, metal, and tile, plus flat-roof systems for low-slope sections. We'll walk you through the options and what best fits your home and budget.",
+        chips:["quote","replacement","financing"] },
+      { id:"pricing", kw:["price","prices","cost","costs","how much","expensive","cheap","ballpark","rate","pricing","budget"],
+        reply:"Every roof is different, so we price it after a quick free inspection — no guesswork and no pressure. Most repairs and replacements also qualify for financing.",
+        chips:["quote","financing","inspection"] },
+      { id:"financing", kw:["financ","finance","payment","payments","afford","monthly","loan","pay over time","installment","credit"],
+        reply:"Yes — we offer flexible financing so you can spread the cost of a new roof over time, with options for most budgets. A free quote is the easiest way to see what you'd qualify for.",
+        chips:["quote","pricing","services"] },
+      { id:"timeline", kw:["how long","timeline","how soon","take to","duration","how many days","turnaround","lead time"],
+        reply:"Most roof replacements are completed in 1–2 days once we start, and smaller repairs are often same-week. After your free inspection we'll give you a firm schedule.",
+        chips:["quote","inspection","replacement"] },
+      { id:"warranty", kw:["warranty","warranties","guarantee","guaranteed","backed","lifetime","workmanship"],
+        reply:"Our workmanship is backed by a lifetime warranty, on top of the manufacturer's warranty on the materials — so your roof is protected for the long haul.",
+        chips:["quote","materials","credentials"] },
+      { id:"credentials", kw:["licensed","license","insured","bonded","certified","legit","reputable","accredited","liability"],
+        reply:"We're a fully licensed and insured Florida roofing contractor with 18 years in business — 2,400+ roofs completed and a 4.9★ rating across 600+ local reviews.",
+        chips:["reviews","warranty","quote"] },
+      { id:"reviews", kw:["review","reviews","rating","ratings","reputation","reference","references","testimonial","stars"],
+        reply:"We're rated 4.9★ across 600+ local reviews, with thousands of Central Florida roofs since 2007. Happy to share references for work near you.",
+        chips:["quote","credentials","areas"] },
+      { id:"experience", kw:["how long in business","experience","established","since when","about you","who are you","family owned","in business","been in business","how long have you","years in business"],
+        reply:"Gravity Roofing has served Central Florida since 2007 — 18 years, 2,400+ roofs, licensed and insured, with a lifetime workmanship warranty on our work.",
+        chips:["reviews","credentials","quote"] },
+      { id:"emergency", kw:["emergency","urgent","right now","asap","active leak","water coming in","flooding","tarp","leaking now"],
+        reply:"",
+        chips:["quote","repair"] },
+      { id:"hours", kw:["hours","open","when are you open","availability","what time","weekend","saturday","sunday","after hours"],
+        reply:"We're available Monday–Saturday, 7am–7pm, for free estimates and scheduling across Central Florida.",
+        chips:["quote","areas","call"] },
+      { id:"areas", kw:["area","areas","where","located","location","cover","near me","serve","service area","orlando","winter park","kissimmee","sanford","lake mary","apopka","oviedo","do you come to"],
+        reply:"We cover Orlando and Central Florida — including Winter Park, Kissimmee, Sanford, Lake Mary, Apopka, and Oviedo. Want to check your address with a free quote?",
+        chips:["quote","financing","hours"] },
+      { id:"maintenance", kw:["maintenance","maintain","clean","cleaning","moss","algae","tune up","prolong","extend the life"],
+        reply:"We offer maintenance and tune-ups — clearing debris, resealing flashing, and catching small issues before they turn into leaks. It's the cheapest way to add years to your roof.",
+        chips:["inspection","quote","repair"] },
+      { id:"signs", kw:["need a new roof","should i replace","how old","roof age","signs","when to replace","worth fixing","repair or replace","do i need","how do i know","how to tell"],
+        reply:"Common signs you may need work: shingle granules in the gutters, curling or missing shingles, stains or daylight in the attic, or a roof over ~20 years old. A free inspection tells you for sure.",
+        chips:["inspection","quote","replacement"] },
+      { id:"commercial", kw:["commercial","business roof","building","flat roof","apartment","hoa","property manager","low slope"],
+        reply:"Yes — we handle commercial and low-slope flat roofs as well as residential. Tell us about the building and we'll put together a quote.",
+        chips:["quote","materials","areas"] }
+    ];
+    var REPLY = {}; KB.forEach(function(k){ REPLY[k.id] = k; });
+
+    var LABELS = {
+      quote:"Get a free quote", services:"Our services", replacement:"Roof replacement",
+      repair:"Repairs & leaks", storm:"Storm & insurance", inspection:"Free inspection",
+      gutters:"Gutters", materials:"Roof materials", pricing:"Pricing & cost", financing:"Financing",
+      timeline:"How long it takes", warranty:"Warranty", credentials:"Licensed & insured",
+      reviews:"Reviews", experience:"About us", emergency:"Emergency leak", hours:"Hours",
+      areas:"Areas we cover", maintenance:"Maintenance", signs:"Do I need a new roof?",
+      commercial:"Commercial", call:"Talk to a person", bye:"That's all"
+    };
+    function chipsFor(ids){ chips(ids.map(function(id){ return { label: LABELS[id] || id, intent:id }; })); }
+    function normalize(s){ return (" " + s.toLowerCase().replace(/['’`]/g,"") + " ").replace(/[^a-z0-9 ]+/g," ").replace(/\s+/g," "); }
+
     function detect(text){
-      var t=text.toLowerCase();
-      if(/quote|estimate|inspection/.test(t)) return "quote";
-      if(/price|cost|how much|expensive|cheap/.test(t)) return "pricing";
-      if(/financ|payment|afford|monthly|loan/.test(t)) return "financing";
-      if(/area|where|location|cover|near|serve|orlando/.test(t)) return "areas";
-      if(/leak|repair|fix|replace|shingle|storm|damage|service|gutter/.test(t)) return "services";
-      if(/call|phone|talk|human|person|speak|number/.test(t)) return "call";
-      if(/hello|^hi$|hey|thank/.test(t)) return "hi";
+      var t = normalize(text);
+      if(/\b(quote|estimate|book|get started|sign me up|im interested|interested|lets do it)\b/.test(t)) return "quote";
+      var best = "", bestScore = 0;
+      KB.forEach(function(k){
+        var score = 0;
+        k.kw.forEach(function(w){ if(t.indexOf(w) > -1){ score += (w.indexOf(" ") > -1 ? 3 : 1); } });
+        if(score > bestScore){ bestScore = score; best = k.id; }
+      });
+      if(bestScore > 0) return best;
+      if(/(call|phone|talk|speak|human|real person|representative|contact you|reach you)/.test(t)) return "call";
+      if(/(thank|thanks|appreciate)/.test(t)) return "thanks";
+      if(/(^| )(hi|hey|hello|yo|howdy|good morning|good afternoon)( |$)/.test(t)) return "hi";
+      if(/(bye|goodbye|thats all|no thanks|nothing else|im good|all set)/.test(t)) return "bye";
       return "";
     }
 
     function handle(text, intent){ addUser(text); route(intent || detect(text)); }
 
+    function telLine(lead, tail){
+      var bub = addBot(lead);
+      var a = el("a","gchat-tel",PHONE); a.href = "tel:+14074610234"; bub.appendChild(a);
+      if(tail) bub.appendChild(document.createTextNode(tail));
+      return bub;
+    }
     function route(intent){
-      switch(intent){
-        case "quote": startQuote(); break;
-        case "services":
-          botSay("We handle it all — roof replacements, leak & storm repairs, insurance-claim roofs, and free inspections — with a licensed, insured Central Florida crew and a lifetime workmanship warranty.", function(){
-            chips([{label:"Get a free quote", intent:"quote"},{label:"Areas we cover", intent:"areas"}]); });
-          break;
-        case "areas":
-          botSay("We cover Orlando and Central Florida — including Winter Park, Kissimmee, Sanford, Lake Mary, Apopka, and Oviedo. Want to check your address with a free quote?", function(){
-            chips([{label:"Get a free quote", intent:"quote"},{label:"Financing", intent:"financing"}]); });
-          break;
-        case "financing":
-          botSay("Yes — we offer flexible financing so you can spread the cost of a new roof over time, with options for most budgets. A free quote is the easiest way to see what you'd qualify for.", function(){
-            chips([{label:"Get a free quote", intent:"quote"},{label:"Services", intent:"services"}]); });
-          break;
-        case "pricing":
-          botSay("Every roof is different, so we price it after a quick free inspection — no guesswork, no pressure. Most repairs and replacements also qualify for financing.", function(){
-            chips([{label:"Get a free quote", intent:"quote"},{label:"Financing", intent:"financing"}]); });
-          break;
-        case "call":
-          typing(function(){
-            var bub=addBot("Prefer to talk it through? You can reach our team at ");
-            var a=el("a","gchat-tel",PHONE); a.href="tel:+14074610234"; bub.appendChild(a);
-            bub.appendChild(document.createTextNode(" — or I can set up your free quote right here."));
-            chips([{label:"Get a free quote", intent:"quote"}]);
-          });
-          break;
-        case "hi":
-          botSay("Hey there! 👋 I can get you a free quote, walk through our services, check your area, or explain financing. What would help most?", menuChips);
-          break;
-        case "bye":
-          botSay("Anytime! 👋 Just tap the chat button whenever you need us. — Gravity Roofing");
-          break;
-        default:
-          botSay("I can get you a free quote, explain our services, check if we cover your area, or connect you with our team. What sounds good?", menuChips);
-      }
+      if(intent==="quote"){ startQuote(); return; }
+      if(intent==="call"){ typing(function(){ telLine("Prefer to talk it through? You can reach our team at ", " — or I can set up your free quote right here."); chipsFor(["quote"]); }); return; }
+      if(intent==="emergency"){ typing(function(){ telLine("Active leak? Let's move fast — call us now at ", ". We can tarp it and stop the water today, then sort out the full repair. Or I can log your details so we call you first."); chipsFor(["quote","repair"]); }); return; }
+      if(intent==="hi"){ botSay("Hey there! 👋 I can get you a free quote, explain our services, check your area, or answer questions about pricing, financing, warranty, timelines and more. What would help most?", menuChips); return; }
+      if(intent==="thanks"){ botSay("You're very welcome! 😊 Anything else I can help with?", menuChips); return; }
+      if(intent==="bye"){ botSay("Anytime! 👋 Just tap the chat button whenever you need us. — Gravity Roofing"); return; }
+      var k = REPLY[intent];
+      if(k && k.reply){ botSay(k.reply, function(){ chipsFor(k.chips); }); return; }
+      botSay("Good question! I can help with quotes, pricing, financing, services, repairs, your area, warranty, timelines and more — or you can reach our team directly at " + PHONE + ". What would you like to know?", menuChips);
     }
 
     function step(v){
